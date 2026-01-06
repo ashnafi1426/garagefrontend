@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -10,22 +13,47 @@ export default function Contact() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setStatus('sending');
+    setLoading(true);
+    setStatus(null);
+    
+    console.log('Submitting to:', `${API_URL}/api/contact`);
+    console.log('Form data:', form);
+    
     try {
-      const res = await fetch('http://localhost:8000/api/contact', {
+      const res = await fetch(`${API_URL}/api/contact`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, type: 'contact' }),
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
       });
+      
+      console.log('Response status:', res.status);
+      console.log('Response headers:', res.headers);
+      
+      // Check if response is JSON
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response. Please check if backend is running on port 9000.');
+      }
+      
       const data = await res.json();
-      if (res.ok) {
-        setStatus('Message sent successfully!');
-        setForm({ name: '', email: '', phone: '', message: '' });
+      console.log('Response data:', data);
+      
+      if (res.ok && data.status === 'success') {
+        setStatus({ type: 'success', message: data.message || 'Message sent successfully!' });
+        setForm({ name: '', email: '', phone: '', subject: '', message: '' });
       } else {
-        setStatus('Error: ' + (data.error || 'Unknown error'));
+        setStatus({ type: 'error', message: data.message || 'Failed to send message' });
       }
     } catch (err) {
-      setStatus('Error: ' + err.message);
+      console.error('Contact form error:', err);
+      setStatus({ 
+        type: 'error', 
+        message: `Error: ${err.message}. Please ensure the backend server is running on port 9000.` 
+      });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -87,7 +115,7 @@ export default function Contact() {
 
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label className="form-label">Name</label>
+                <label className="form-label">Name *</label>
                 <input
                   type="text"
                   name="name"
@@ -95,11 +123,12 @@ export default function Contact() {
                   onChange={handleChange}
                   className="form-control"
                   required
+                  disabled={loading}
                 />
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Email</label>
+                <label className="form-label">Email *</label>
                 <input
                   type="email"
                   name="email"
@@ -107,6 +136,7 @@ export default function Contact() {
                   onChange={handleChange}
                   className="form-control"
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -118,11 +148,25 @@ export default function Contact() {
                   value={form.phone}
                   onChange={handleChange}
                   className="form-control"
+                  disabled={loading}
                 />
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Message</label>
+                <label className="form-label">Subject</label>
+                <input
+                  type="text"
+                  name="subject"
+                  value={form.subject}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="e.g., Service Inquiry, Appointment Request"
+                  disabled={loading}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Message *</label>
                 <textarea
                   name="message"
                   value={form.message}
@@ -130,14 +174,19 @@ export default function Contact() {
                   className="form-control"
                   rows="4"
                   required
+                  disabled={loading}
                 />
               </div>
 
-              <button type="submit" className="btn btn-danger w-100">
-                Send Message
+              <button type="submit" className="btn btn-danger w-100" disabled={loading}>
+                {loading ? 'Sending...' : 'Send Message'}
               </button>
 
-              {status && <div className="mt-3 alert alert-info">{status}</div>}
+              {status && (
+                <div className={`mt-3 alert ${status.type === 'success' ? 'alert-success' : 'alert-danger'}`}>
+                  {status.message}
+                </div>
+              )}
             </form>
           </div>
         </div>
