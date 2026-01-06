@@ -6,6 +6,10 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL;
+  
+  // Debug: Log API URL on component mount
+  console.log('Contact Page - API_URL from env:', API_URL);
+  console.log('Contact Page - Full env:', import.meta.env);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
