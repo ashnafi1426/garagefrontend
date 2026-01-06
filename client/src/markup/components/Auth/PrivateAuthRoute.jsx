@@ -9,25 +9,54 @@ const PrivateAuthRoute = ({ roles, children }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [isLogged, setIsLogged] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  
   useEffect(() => {
-    const loggedInEmployee = getAuth();
-    loggedInEmployee.then((response) => {
-      if (response.employee_token) {
+    const checkAuth = async () => {
+      const loggedInEmployee = await getAuth();
+      
+      console.log('PrivateAuthRoute - Auth Data:', loggedInEmployee);
+      console.log('PrivateAuthRoute - Required Roles:', roles);
+      
+      if (loggedInEmployee.employee_token) {
         setIsLogged(true);
-        if (roles && roles.length > 0 && roles.includes(response.employee_role)) {
+        
+        // Check authorization using company_role_id
+        const userRole = loggedInEmployee.company_role_id || loggedInEmployee.employee_role;
+        console.log('PrivateAuthRoute - User Role:', userRole);
+        
+        if (roles && roles.length > 0) {
+          if (roles.includes(userRole)) {
+            setIsAuthorized(true);
+            console.log('PrivateAuthRoute - AUTHORIZED');
+          } else {
+            console.log('PrivateAuthRoute - NOT AUTHORIZED');
+          }
+        } else {
+          // No specific roles required, just need to be logged in
           setIsAuthorized(true);
         }
+      } else {
+        console.log('PrivateAuthRoute - NOT LOGGED IN');
       }
+      
       setIsChecked(true);
-    });
+    };
+    
+    checkAuth();
   }, [roles]);
-  if (isChecked) {
-    if (!isLogged) {
-      return <Navigate to="/login" />;
-    }
-    if (!isAuthorized) {
-      return <Navigate to="/unauthorized" />;
-    }
+  
+  if (!isChecked) {
+    return <div>Loading...</div>;
+  }
+  
+  if (!isLogged) {
+    console.log('PrivateAuthRoute - Redirecting to /login');
+    return <Navigate to="/login" />;
+  }
+  
+  if (!isAuthorized) {
+    console.log('PrivateAuthRoute - Redirecting to /unauthorized');
+    return <Navigate to="/unauthorized" />;
   }
 
   return children;

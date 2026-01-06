@@ -21,9 +21,22 @@ export function AuthProvider({ children }) {
   });
 
   const login = (data) => {
+    console.log('AuthContext - Login Data:', data);
+    
+    // Store token
     localStorage.setItem("employee_token", data.employee_token);
-    localStorage.setItem("employee", JSON.stringify(data));
-    setEmployee(data);
+    
+    // Store employee data with role information
+    const employeeData = {
+      ...data,
+      employee_role: data.company_role_id, // Add employee_role for compatibility
+    };
+    
+    localStorage.setItem("employee", JSON.stringify(employeeData));
+    
+    console.log('AuthContext - Stored Employee Data:', employeeData);
+    
+    setEmployee(employeeData);
     setIsLogged(true);
     setIsAdmin(data.company_role_id === 3);
   };

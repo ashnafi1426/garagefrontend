@@ -5,7 +5,7 @@ import { useAuth } from "../../../context/AuthContext";
 
 function LoginForm() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
 
   const [employee_email, setEmail] = useState("");
   const [employee_password, setPassword] = useState("");
@@ -45,7 +45,20 @@ function LoginForm() {
       if (data && data.status === "success") {
         // Use AuthContext login to store employee data
         login(data.data);
-        navigate("/admin", { replace: true });
+        
+        // Check if user is admin (role 3)
+        const roleId = data.data.company_role_id || data.data.employee_role;
+        console.log('Login successful - Role ID:', roleId);
+        
+        if (roleId === 3) {
+          // Admin - redirect to admin dashboard
+          navigate("/admin", { replace: true });
+        } else {
+          // Non-admin users - redirect to unauthorized
+          setServerError("Access denied. Admin privileges required.");
+          // Clear the login data
+          logout();
+        }
       } else {
         setServerError(data?.message || "Login failed");
       }

@@ -1,13 +1,27 @@
 // Function to read the data from the user's local storage  
 const getAuth = async () => {
-  const employee = await JSON.parse(localStorage.getItem('employee'));
-  if (employee && employee.employee_token) {
-    const decodedToken = await decodeTokenPayload(employee.employee_token);
-    employee.employee_role = decodedToken.employee_role;
-    employee.employee_id = decodedToken.employee_id;
-    employee.employee_first_name = decodedToken.employee_first_name;
-    return employee;
-  } else {
+  const tokenString = localStorage.getItem('employee_token');
+  const employeeString = localStorage.getItem('employee');
+  
+  if (!tokenString || !employeeString) {
+    return {};
+  }
+
+  try {
+    const employee = JSON.parse(employeeString);
+    const decodedToken = decodeTokenPayload(tokenString);
+    
+    // Merge token data with stored employee data
+    return {
+      ...employee,
+      employee_token: tokenString,
+      employee_role: decodedToken.employee_role || decodedToken.company_role_id,
+      company_role_id: decodedToken.company_role_id,
+      employee_id: decodedToken.employee_id,
+      employee_first_name: decodedToken.employee_first_name,
+    };
+  } catch (error) {
+    console.error('Error parsing auth data:', error);
     return {};
   }
 };

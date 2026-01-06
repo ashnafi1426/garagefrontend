@@ -41,40 +41,40 @@ export default function AppRoutes() {
       <Route path="/about" element={<About />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 
-      {/* Admin Dashboard */}
+      {/* Admin Dashboard - ADMIN ONLY */}
       <Route path="/admin" element={<PrivateAuthRoute roles={[3]}><AdminDashboard /></PrivateAuthRoute>} />
 
-      {/* Employees Routes */}
+      {/* Employees Routes - ADMIN ONLY */}
       <Route path="/admin/employees" element={<PrivateAuthRoute roles={[3]}><Employees /></PrivateAuthRoute>} />
       <Route path="/admin/add-employee" element={<PrivateAuthRoute roles={[3]}><AddEmployee /></PrivateAuthRoute>} />
       <Route path="/admin/employee/edit/:id" element={<PrivateAuthRoute roles={[3]}><EditEmployee /></PrivateAuthRoute>} />
 
-      {/* Customers Routes */}
-      <Route path="/admin/customers" element={<PrivateAuthRoute roles={[2, 3]}><Customers /></PrivateAuthRoute>} />
+      {/* Customers Routes - ADMIN ONLY */}
+      <Route path="/admin/customers" element={<PrivateAuthRoute roles={[3]}><Customers /></PrivateAuthRoute>} />
       <Route path="/admin/add-customer" element={<PrivateAuthRoute roles={[3]}><AddCustomer /></PrivateAuthRoute>} />
-      <Route path="/admin/customers/edit/:id" element={<PrivateAuthRoute roles={[2, 3]}><EditCustomer /></PrivateAuthRoute>} />
-      <Route path="/admin/customer-profile" element={<PrivateAuthRoute roles={[2, 3]}><CustomerProfileForm /></PrivateAuthRoute>} />
+      <Route path="/admin/customers/edit/:id" element={<PrivateAuthRoute roles={[3]}><EditCustomer /></PrivateAuthRoute>} />
+      <Route path="/admin/customer-profile" element={<PrivateAuthRoute roles={[3]}><CustomerProfileForm /></PrivateAuthRoute>} />
 
-      {/* Vehicles Routes */}
-      <Route path="/admin/vehicles" element={<PrivateAuthRoute roles={[2, 3]}><Vehicles /></PrivateAuthRoute>} />
+      {/* Vehicles Routes - ADMIN ONLY */}
+      <Route path="/admin/vehicles" element={<PrivateAuthRoute roles={[3]}><Vehicles /></PrivateAuthRoute>} />
       <Route path="/admin/add-vehicle" element={<PrivateAuthRoute roles={[3]}><AddVehicle /></PrivateAuthRoute>} />
       <Route path="/admin/add-vehicle/:customerId" element={<PrivateAuthRoute roles={[3]}><AddVehicle /></PrivateAuthRoute>} />
-      <Route path="/admin/vehicle/edit/:id" element={<PrivateAuthRoute roles={[2, 3]}><EditVehicle /></PrivateAuthRoute>} />
+      <Route path="/admin/vehicle/edit/:id" element={<PrivateAuthRoute roles={[3]}><EditVehicle /></PrivateAuthRoute>} />
 
-      {/* Services Routes */}
+      {/* Services Routes - ADMIN ONLY */}
       <Route path="/admin/add-service" element={<PrivateAuthRoute roles={[3]}><ServiceManage /></PrivateAuthRoute>} />
       <Route path="/admin/add-service/:customerId" element={<PrivateAuthRoute roles={[3]}><ServiceManage /></PrivateAuthRoute>} />
 
-      {/* Orders Routes */}
-      <Route path="/admin/orders" element={<PrivateAuthRoute roles={[1, 2, 3]}><Orders /></PrivateAuthRoute>} />
-      <Route path="/admin/new-order" element={<PrivateAuthRoute roles={[1, 2, 3]}><NewOrder /></PrivateAuthRoute>} />
-      <Route path="/admin/order/edit/:id" element={<PrivateAuthRoute roles={[1, 2, 3]}><EditOrder /></PrivateAuthRoute>} />
+      {/* Orders Routes - ADMIN ONLY */}
+      <Route path="/admin/orders" element={<PrivateAuthRoute roles={[3]}><Orders /></PrivateAuthRoute>} />
+      <Route path="/admin/new-order" element={<PrivateAuthRoute roles={[3]}><NewOrder /></PrivateAuthRoute>} />
+      <Route path="/admin/order/edit/:id" element={<PrivateAuthRoute roles={[3]}><EditOrder /></PrivateAuthRoute>} />
 
-      {/* Payments Routes */}
-      <Route path="/admin/payments" element={<PrivateAuthRoute roles={[2, 3]}><Payments /></PrivateAuthRoute>} />
-      <Route path="/admin/add-payment" element={<PrivateAuthRoute roles={[2, 3]}><AddPayment /></PrivateAuthRoute>} />
-      <Route path="/admin/payment/edit/:id" element={<PrivateAuthRoute roles={[2, 3]}><EditPayment /></PrivateAuthRoute>} />
-      <Route path="/admin/stripe-payment/:orderId/:amount" element={<PrivateAuthRoute roles={[2, 3]}><StripePayment /></PrivateAuthRoute>} />
+      {/* Payments Routes - ADMIN ONLY */}
+      <Route path="/admin/payments" element={<PrivateAuthRoute roles={[3]}><Payments /></PrivateAuthRoute>} />
+      <Route path="/admin/add-payment" element={<PrivateAuthRoute roles={[3]}><AddPayment /></PrivateAuthRoute>} />
+      <Route path="/admin/payment/edit/:id" element={<PrivateAuthRoute roles={[3]}><EditPayment /></PrivateAuthRoute>} />
+      <Route path="/admin/stripe-payment/:orderId/:amount" element={<PrivateAuthRoute roles={[3]}><StripePayment /></PrivateAuthRoute>} />
     </Routes>
   );
 }
